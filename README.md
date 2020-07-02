@@ -7,6 +7,9 @@ With this codebase, maybe you can find something what you need or new ways to im
 ### Version Information
 You can open the project with Unity 2017.4.40 LTS version.
 
+### Images
+All images are created and designed by Burak Cavundurluoglu.
+
 ### Published Game
 You can find the published game on http://www.moonbridgegames.com/hezarfen-galata/
 
