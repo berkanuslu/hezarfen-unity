@@ -98,7 +98,6 @@ namespace GameAnalyticsSDK
                 GameAnalytics.SetCustomId("ADMINUSER1996");
             Debug.Log("This is a debug build! The user id is ADMINUSER1996");
             }
-            GameAnalytics.Initialize();
 
             DontDestroyOnLoad(gameObject);
         }

@@ -34,6 +34,7 @@ public class LevelManager : MonoBehaviour
 			_instance = this;
 		}
 
+        GameAnalytics.Initialize();
 		GameMenuManager.Instance.UpdateBestDistance();
 		GameMenuManager.Instance.SetLevelResolution();
 		MissionManager.Instance.LoadStatus();
