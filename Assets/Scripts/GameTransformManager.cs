@@ -89,9 +89,9 @@ public class GameTransformManager : MonoBehaviour
 		cameraHorizontalExtent = Camera.main.orthographicSize * Screen.width / Screen.height;
 		cameraVerticalExtent = Camera.main.orthographicSize;
 
-		Debug.LogWarning("Current Aspect: " + aspect);
-		Debug.LogWarning("cameraHorizontalExtent: " + cameraHorizontalExtent);
-		Debug.LogWarning("cameraVerticalExtent: " + cameraVerticalExtent);
+		//Debug.LogWarning("Current Aspect: " + aspect);
+		//Debug.LogWarning("cameraHorizontalExtent: " + cameraHorizontalExtent);
+		//Debug.LogWarning("cameraVerticalExtent: " + cameraVerticalExtent);
 
 		galataEndXPosition = -(cameraHorizontalExtent * 1.5f + 175.0f);
 		abracadabraPosition = cameraHorizontalExtent + 15.0f;
