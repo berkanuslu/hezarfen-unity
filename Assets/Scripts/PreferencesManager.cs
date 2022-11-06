@@ -1,6 +1,8 @@
 using UnityEngine;
 using System.Collections;
 
+using GameAnalyticsSDK;
+
 public class PreferencesManager : MonoBehaviour
 {
 	static PreferencesManager _instance;
