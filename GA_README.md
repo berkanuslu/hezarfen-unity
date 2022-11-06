@@ -21,11 +21,11 @@ From your own GameObject (with script execution order coming after GameAnalytics
 
 GameAnalytics supports 5 different types of events:
 
-- Business
-- Resource
-- Progression
-- Error
-- Design
+- [Business](#track-real-money-transactions)
+- [Resource](#balance-virtual-economy)
+- [Progression](#track-player-progression)
+- [Error](#log-error-events)
+- [Design](#use-custom-design-events)
 
 To send an event, remember to include the namespace GameAnalyticsSDK:
 
@@ -33,7 +33,8 @@ To send an event, remember to include the namespace GameAnalyticsSDK:
 
 The next steps will guide you through the instrumentation of each of the different event types.
 
-## Track real money transactions [[documentation](https://gameanalytics.force.com/knowledgebase/s/article/Event-Tracking-Unity-SDK#Business-Events "GameAnalytics.com")]
+## Track real money transactions
+[[documentation](https://gameanalytics.force.com/knowledgebase/s/article/Event-Tracking-Unity-SDK#Business-Events "GameAnalytics.com")]
 
 With the Business event, you can include information on the specific type of in-app item purchased, and where in the game the purchase was made. Additionally, the GameAnalytics SDK captures the app store receipt to __validate__ the purchases.
 The method NewBusinessEventIOSAutoFetchReceipt will attempt to locate the latest receipt in iOS native code and submit the event if found.
