@@ -1,42 +1,25 @@
-# GameAnalytics How To
+# How To GameAnalytics
 
 ## Initialisation
 
-### Creating a GameAnalytics GameObject
+From v3.11.0 and onwards you need to manually initialize the SDK by calling:
 
-Open the initial scene the game will load. Then select:
-
-__*Window > GameAnalytics > Create GameAnalytics object*__
- 
-The GameAnalytics object will be placed in the scene you are currently on (remember to __save__ the scene to keep the changes).
-
-Unity provides the GameObject methods called awake and start.
-First all GameObjects get the awake call. When every awake is done then all GameObjects get the start call.
-
-The execution order for each is __not fixed__.
-The GameAnalytics settings GameObject is initialized in the awake method, but other GameObjects could have had their awake call happen before this.
-Therefore when submitting events from GameObjects in Unity it is recommended to do this after (or inside) the start method. This will ensure everything is ready.
-If an event is submitted before initialization then the log will output something like this:
-*Warning/GameAnalytics: Could not add design event: Datastore not initialized*
+`GameAnalytics.Initialize();`
 
 ### Custom ID
 
-The SDK will __automatically generate__ a user id and this is perfectly fine for almost all cases.
+The SDK will automatically generate a user id and this is perfectly fine for almost all cases.
 Sometimes it is useful to supply this user_id manually – for example, if you download raw data for processing and need to match your internal user id (could be a database index on your user table) to the data collected through GameAnalytics.
 Note that if you introduce this into a game that is already deployed (using the automatic id) it will start counting existing users as new users and your metrics will be affected. Use this from the start of the app lifetime.
 Use the following piece of code to set the custom user id:
 
-*GameAnalytics.SetCustomId("user1234567879");*
+`GameAnalytics.SetCustomId("user1234567879");`
 
-__Remember when using custom id you need to set the custom id before initializing GameAnalytics SDK or else it will not be used.__
+Remember when using custom id you need to set the custom id __before__ initializing GameAnalytics SDK or else it will not be used.
 
-From v3.11.0 and onwards you need to manually initialize the SDK by calling:
+From your own GameObject (with script execution order coming after GameAnalytics script’s order if your object is in the same scene as the GameAnalytics object as some code is called on Awake event which needs to be called before initializing the sdk).
 
-*GameAnalytics.Initialize();*
-
-from your own GameObject (with script execution order coming after GameAnalytics script’s order if your object is in the same scene as the GameAnalytics object as some code is called on Awake event which needs to be called before initializing the sdk).
-
-GameAnalytics supports 5 different types of __events__:
+GameAnalytics supports 5 different types of events:
 
 - Business
 - Resource
@@ -46,64 +29,79 @@ GameAnalytics supports 5 different types of __events__:
 
 To send an event, remember to include the namespace GameAnalyticsSDK:
 
-*using GameAnalyticsSDK;*
+`using GameAnalyticsSDK;`
 
 The next steps will guide you through the instrumentation of each of the different event types.
 
-## Track real money transactions
+## Track real money transactions [[documentation](https://gameanalytics.force.com/knowledgebase/s/article/Event-Tracking-Unity-SDK#Business-Events "GameAnalytics.com")]
 
-With the Business event, you can include information on the specific type of in-app __item__ purchased, and where in the game the purchase was made. Additionally, the GameAnalytics SDK captures the app store __receipt__ to validate the purchases.
+With the Business event, you can include information on the specific type of in-app item purchased, and where in the game the purchase was made. Additionally, the GameAnalytics SDK captures the app store receipt to __validate__ the purchases.
+The method NewBusinessEventIOSAutoFetchReceipt will attempt to locate the latest receipt in iOS native code and submit the event if found.
 
-To add a business event call the following function:
+To add a business event call the following functions:
 
-### iOS
-*GameAnalytics.NewBusinessEventIOS(string currency, int amount, string itemType, string itemId, string cartType, string receipt);*
+```
+// Android - Google Play
+#if (UNITY_ANDROID)
+    GameAnalytics.NewBusinessEventGooglePlay (string currency, int amount, string itemType, string itemId, string cartType, string receipt, string signature);
+#endif
 
-### Android
-*GameAnalytics.NewBusinessEventGooglePlay(string currency, int amount, string itemType, string itemId, string cartType, string receipt, string signature);*
+// iOS - with receipt
+#if (UNITY_IOS)
+    GameAnalytics.NewBusinessEventIOS (string currency, int amount, string itemType, string itemId, string cartType, string receipt);
+#endif
+
+// iOS - with autoFetchReceipt
+#if (UNITY_IOS)
+    GameAnalytics.NewBusinessEventIOSAutoFetchReceipt (string currency, int amount, string itemType, string itemId, string cartType);
+#endif
+```
+
+### Business events without validation
+
+It is also possible to send business events __without validation__:
+
+`GameAnalytics.NewBusinessEvent (string currency, int amount, string itemType, string itemId, string cartType);`
 
 ## Balance virtual economy
 
-Resources events is a way of tracking you __in-game economy__. From setting up the event you will be able to see three types of events in the tool:
+__Resource events__ is a way of tracking you in-game economy. From setting up the event you will be able to see three types of events in the tool
 
 - Flow, the __total balance__ from currency spend and rewarded
-- Sink, is all __currency spend__ on items and lastly source being all currency rewarded in game
+- Sink is all currency __spent__ on items and lastly source being all currency rewarded in game
+
+Be careful to not call the resource event __too often__! In a game where the user collect coins fairly fast you should not call a Source event on each pickup.
+Instead you should count the coins and send a single Source event when the user either completes or fails the level.
 
 Here is some best practices for structuring the events:
 
-*GameAnalytics.NewResourceEvent(GA_Resource.GAResourceFlowType.GAResourceFlowTypeSource, “Gems”, 400, “IAP”, “Coins400”);*
+```
+GameAnalytics.NewResourceEvent(GA_Resource.GAResourceFlowType.GAResourceFlowTypeSource, “Gems”, 400, “IAP”, “Coins400”);
+GameAnalytics.NewResourceEvent(GA_Resource.GAResourceFlowType.GAResourceFlowTypeSink, “Gems”, 400, “Weapons”, “SwordOfFire”);
+GameAnalytics.NewResourceEvent(GA_Resource.GAResourceFlowType.GAResourceFlowTypeSink, “Gems”, 100, “Boosters”, “BeamBooster5Pack”);
+GameAnalytics.NewResourceEvent(GA_Resource.GAResourceFlowType.GAResourceFlowTypeSource, “BeamBooster”, 5, “Gems”, “BeamBooster5Pack”);
+GameAnalytics.NewResourceEvent(GA_Resource.GAResourceFlowType.GAResourceFlowTypeSink, “BeamBooster”, 3, “Gameplay”, “BeamBooster5Pack”);
+```
 
-*GameAnalytics.NewResourceEvent(GA_Resource.GAResourceFlowType.GAResourceFlowTypeSink, “Gems”, 400, “Weapons”, “SwordOfFire”);*
-
-*GameAnalytics.NewResourceEvent(GA_Resource.GAResourceFlowType.GAResourceFlowTypeSink, “Gems”, 100, “Boosters”, “BeamBooster5Pack”);*
-
-*GameAnalytics.NewResourceEvent(GA_Resource.GAResourceFlowType.GAResourceFlowTypeSource, “BeamBooster”, 5, “Gems”, “BeamBooster5Pack”);*
-
-*GameAnalytics.NewResourceEvent(GA_Resource.GAResourceFlowType.GAResourceFlowTypeSink, “BeamBooster”, 3, “Gameplay”, “BeamBooster5Pack”);*
-
-Please note that any Resource currencies and Resource item types you want to use must first be __defined in Settings__, under the Setup tab.
+Please note that any Resource currencies and Resource item types you want to use __must first be defined__ in Settings, under the Setup tab.
 Any value not defined will not be tracked in the events.
 
 ## Track player progression
 
-Use this event to track when players __start and finish levels__ in your game. This event follows a 3 tier hierarchy structure to indicate a player's path or place in the game:
-
-- World
-- Level
-- Phase
+Use progression event to track when players start and finish __levels__ in your game. This event follows a 3 tier hierarchy structure (World, Level and Phase) to indicate a player's path or place in the game.
 
 To add a progression event call the following function:
 
-*GameAnalytics.NewProgressionEvent(GA_Progression.GAProgressionStatus progressionStatus, string progression01, string progression02, string progression03, int score);*
+`GameAnalytics.NewProgressionEvent(GA_Progression.GAProgressionStatus progressionStatus, string progression01, string progression02, string progression03, int score);`
 
-## Use custom design events
-
-Track __any other__ concept in your game using this event type. For example, you could use this event to track GUI elements or tutorial steps.
-Custom dimensions are __not__ supported on this event type.
-
-To add a design event call the following function:
-
-*GameAnalytics.NewDesignEvent (string eventName, float eventValue);*
+```
+GameAnalytics.NewProgressionEvent (GAProgressionStatus.Start, "World1");
+GameAnalytics.NewProgressionEvent (GAProgressionStatus.Complete, "World1", score);
+GameAnalytics.NewProgressionEvent (GAProgressionStatus.Start, "World1", "Level1");
+GameAnalytics.NewProgressionEvent (GAProgressionStatus.Complete, "World1", "Level1", score);
+GameAnalytics.NewProgressionEvent (GAProgressionStatus.Start, "World1", "Level1", "Phase1");
+GameAnalytics.NewProgressionEvent (GAProgressionStatus.Complete, "World1", "Level1", "Phase1", score);
+```
 
 ## Log error events
 
@@ -111,19 +109,44 @@ You can use the Error event to log errors or warnings that players generate in y
 
 To add a custom error event call the following function:
 
-*GameAnalytics.NewErrorEvent (GAErrorSeverity severity, string message);*
+`GameAnalytics.NewErrorEvent (GAErrorSeverity severity, string message);`
+
+## Use custom design events
+
+Track __any other__ concept in your game using this event type. For example, you could use this event to track GUI elements or tutorial steps.
+
+> Custom dimensions are not supported on this event type.
+
+To add a design event call the following function:
+
+`GameAnalytics.NewDesignEvent (string eventName, float eventValue);`
 
 ## Use custom dimensions
 
-Custom Dimensions can be used to __filter your data__ in the GameAnalytics webtool. To add custom dimensions to your events you will first have to create a __list__ of all the allowed values in Settings under the Setup tab.
+Custom Dimensions can be used to __filter__ your data in the GameAnalytics webtool. To add custom dimensions to your events you will first have to create a list of all the allowed values. You can do this in Settings under the Setup tab.
 Any value which is not defined will be ignored.
 
 ![Custom dimensions are beautiful!](https://s3.amazonaws.com/public.gameanalytics.com/resources/images/sdk_doc/wrapper_unity/custom_dimensions_and_resources.png "Custom dimensions")
 
+
 For example, to set Custom dimension 01, call the following function:
 
-*GameAnalytics.SetCustomDimension01(string customDimension);*
+`GameAnalytics.SetCustomDimension01(string customDimension);`
+
+## Custom Event Fields
+
+It is possible to use a set of key-value pairs to add extra fields.
+
+Here is an example of how to use it:
+
+```
+Dictionary<string, object> fields = new Dictionary<string, object>();
+fields.put("test", 100);
+fields.put("test_2", "hello_world");
+```
+
+> It will only be available through __raw data export__. For more information on custom event fields and raw data export go [here](https://gameanalytics.com/docs/s/article/Raw-Export-Overview "Raw export docs").
 
 ## Building
 
-Unity shuold be able to take care of anything. If you encounter issues check the [documentation](https://gameanalytics.force.com/knowledgebase/s/article/Advanced-Integration-Unity-SDK#Platform-Build "GameAnalytics documentation").
+[See the documentation](https://gameanalytics.force.com/knowledgebase/s/article/Advanced-Integration-Unity-SDK#Platform-Build "GameAnalytics documentation")
