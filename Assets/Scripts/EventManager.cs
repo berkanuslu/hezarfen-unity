@@ -48,8 +48,7 @@ public class EventManager : MonoBehaviour
         Debug.Log("DEBUG build -> user id ADMINUSER1996");
         }
 #endif
-
-		Start();
+		GameAnalytics.Initialize();
 	}
 
 	public void SendFirstOpenEvent()

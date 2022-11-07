@@ -54,7 +54,6 @@ public class PreferencesManager : MonoBehaviour
 			_instance = this;
 		}
 
-        GameAnalytics.Initialize();
 		CreateAndLoadData();
 	}
 
