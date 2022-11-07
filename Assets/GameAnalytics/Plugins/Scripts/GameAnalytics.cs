@@ -89,16 +89,6 @@ namespace GameAnalyticsSDK
             }
             _instance = this;
 
-#if DEVELOPMENT_BUILD
-            GameAnalytics.SetCustomId("ADMINUSER1996");
-            Debug.Log("This is a development build! The user id is ADMINUSER1996");
-#endif
-            if(Debug.isDebugBuild) 
-            {
-                GameAnalytics.SetCustomId("ADMINUSER1996");
-            Debug.Log("This is a debug build! The user id is ADMINUSER1996");
-            }
-
             DontDestroyOnLoad(gameObject);
         }
 

@@ -305,7 +305,7 @@ public class PreferencesManager : MonoBehaviour
 	{
 		if (!PlayerPrefs.HasKey("first_open"))
 		{
-			// FirebaseAnalytics.LogEvent("first_open");
+			EventManager.Instance.SendFirstOpenEvent();
 			PlayerPrefs.SetInt("first_open", 1);
 			PlayerPrefs.Save();
 		}

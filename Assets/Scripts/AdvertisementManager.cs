@@ -205,7 +205,7 @@ public class AdvertisementManager : MonoBehaviour
 	// 	Debug.Log("HandleRewardBasedVideoRewarded event received for " + amount.ToString() + " " + type);
 
 	// 	GameMenuManager.Instance.RewardCoin(amount);
-	// 	FirebaseEventManager.Instance.SendCustomEvent("reward_from_ad");
+	// 	EventManager.Instance.SendCustomEvent("reward_from_ad");
 	// }
 
 	void OnDestroy()

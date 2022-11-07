@@ -278,7 +278,7 @@ public class GameMenuManager : MonoBehaviour
 		{
 			PreferencesManager.Instance.SetCoins(PreferencesManager.Instance.GetCoins() - shopPrices[0]);
 			PreferencesManager.Instance.ModifyExtraSpeedBy(1);
-			FirebaseEventManager.Instance.SendSpendVirtualCurrency();
+			EventManager.Instance.SendSpendVirtualCurrency();
 
 			UpdateShop();
 			MissionManager.Instance.ShopEvent("ExtraSpeed");
@@ -291,7 +291,7 @@ public class GameMenuManager : MonoBehaviour
 		{
 			PreferencesManager.Instance.SetCoins(PreferencesManager.Instance.GetCoins() - shopPrices[1]);
 			PreferencesManager.Instance.ModifyShieldBy(1);
-			FirebaseEventManager.Instance.SendSpendVirtualCurrency();
+			EventManager.Instance.SendSpendVirtualCurrency();
 
 			UpdateShop();
 			MissionManager.Instance.ShopEvent("Shield");
@@ -304,7 +304,7 @@ public class GameMenuManager : MonoBehaviour
 		{
 			PreferencesManager.Instance.SetCoins(PreferencesManager.Instance.GetCoins() - shopPrices[2]);
 			PreferencesManager.Instance.ModifyAbracadabraBy(1);
-			FirebaseEventManager.Instance.SendSpendVirtualCurrency();
+			EventManager.Instance.SendSpendVirtualCurrency();
 
 			UpdateShop();
 			MissionManager.Instance.ShopEvent("Abracadabra");
@@ -317,7 +317,7 @@ public class GameMenuManager : MonoBehaviour
 		{
 			PreferencesManager.Instance.SetCoins(PreferencesManager.Instance.GetCoins() - shopPrices[3]);
 			PreferencesManager.Instance.ModifyReviveBy(1);
-			FirebaseEventManager.Instance.SendSpendVirtualCurrency();
+			EventManager.Instance.SendSpendVirtualCurrency();
 
 			UpdateShop();
 			MissionManager.Instance.ShopEvent("Revive");
@@ -671,7 +671,7 @@ public class GameMenuManager : MonoBehaviour
 			PreferencesManager.Instance.SetBestDistance(currentDist);
 
 		PreferencesManager.Instance.SetCoins(PreferencesManager.Instance.GetCoins() + currentCoins);
-		FirebaseEventManager.Instance.SendEarnVirtualCurrency();
+		EventManager.Instance.SendEarnVirtualCurrency();
 
 		StartCoroutine(FadeScreen(0.4f, 0.7f));
 		StartCoroutine(MoveMenu(finishMenu.transform, 0, 67, 0.55f, false));

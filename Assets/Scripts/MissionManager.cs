@@ -350,7 +350,7 @@ public class MissionManager : MonoBehaviour
 	void MissionCompleted(Mission mission, int missionID)
 	{
 		activeMissionComplete[missionID] = true;
-		FirebaseEventManager.Instance.SendLevelUp();
+		EventManager.Instance.SendLevelUp();
 
 		StartCoroutine(GameMenuManager.Instance.ShowMissionComplete(mission.description));
 	}
