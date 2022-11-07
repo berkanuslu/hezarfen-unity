@@ -63,19 +63,21 @@ public class EventManager : MonoBehaviour
 		}
 	}
 
-	public void SendEarnVirtualCurrency()
+	public void SendEarnVirtualCurrency(float amount)
 	{
 		if (isEnabled)
 		{
 			Debug.Log("EVENT: virtual currency earned");
+			GameAnalytics.NewResourceEvent (GA_Resource.GAResourceFlowType.GAResourceFlowTypeSource, "Coins", amount, "coin", "coins"+amount);
 		}
 	}
 
-	public void SendSpendVirtualCurrency()
+	public void SendSpendVirtualCurrency(float amount, string item)
 	{
 		if (isEnabled)
 		{
 			Debug.Log("EVENT: virtual currency spent");
+			GameAnalytics.NewResourceEvent (GA_Resource.GAResourceFlowType.GAResourceFlowTypeSink, "Coins", amount, item, "coins"+amount);
 		}
 	}
 

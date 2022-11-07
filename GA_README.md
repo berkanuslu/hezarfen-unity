@@ -74,6 +74,8 @@ __Resource events__ is a way of tracking you in-game economy. From setting up th
 Be careful to not call the resource event __too often__! In a game where the user collect coins fairly fast you should not call a Source event on each pickup.
 Instead you should count the coins and send a single Source event when the user either completes or fails the level.
 
+`GameAnalytics.NewResourceEvent (GA_Resource.GAResourceFlowType flowType, string currency, float amount, string itemType, string itemId);`
+
 Here is some best practices for structuring the events:
 
 ```
