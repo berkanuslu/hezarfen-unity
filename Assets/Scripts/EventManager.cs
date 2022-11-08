@@ -9,9 +9,11 @@ public class EventManager : MonoBehaviour
 
 	static EventManager _instance;
 	static int instances = 0;
-	static int level = 0;
+	static int levelStatus = 0;
+	static int missionStatus = 0;
 
 	public bool isEnabled = false;
+	public bool debug = true;
 
 	public static EventManager Instance
 	{
@@ -41,15 +43,19 @@ public class EventManager : MonoBehaviour
 
 #if DEVELOPMENT_BUILD
         GameAnalytics.SetCustomId("ADMINUSER1996");
-        Debug.Log("DEVELOPMENT build -> user id ADMINUSER1996");
+        if(debug) Debug.Log("DEVELOPMENT build -> user id ADMINUSER1996");
 #else
         if(Debug.isDebugBuild) 
         {
             GameAnalytics.SetCustomId("ADMINUSER1996");
-        Debug.Log("DEBUG build -> user id ADMINUSER1996");
+        	if(debug) Debug.Log("DEBUG build -> user id ADMINUSER1996");
         }
 #endif
 		GameAnalytics.Initialize();
+		GameAnalytics.NewProgressionEvent (GAProgressionStatus.Start, "level"+levelStatus);
+		GameAnalytics.NewProgressionEvent (GAProgressionStatus.Complete, "level"+levelStatus, "mission"+1);
+		GameAnalytics.NewProgressionEvent (GAProgressionStatus.Complete, "level"+levelStatus, "mission"+2);
+		GameAnalytics.NewProgressionEvent (GAProgressionStatus.Complete, "level"+levelStatus, "mission"+3);
 	}
 
 	public void SendFirstOpenEvent()
@@ -58,17 +64,18 @@ public class EventManager : MonoBehaviour
 		{
 			if (!PreferencesManager.Instance.GetFirtsOpen())
 			{
-				Debug.Log("EVENT: first open");
+				if(debug) Debug.Log("EVENT: first open");
 				PreferencesManager.Instance.SetFirtsOpen();
 			}
 		}
 	}
 
+	// Resource events
 	public void SendEarnVirtualCurrency(float amount)
 	{
 		if (isEnabled)
 		{
-			Debug.Log("EVENT: virtual currency earned");
+			if(debug) Debug.Log("EVENT: virtual currency earned: " + amount);
 			GameAnalytics.NewResourceEvent (GAResourceFlowType.Source, "Coins", amount, "coin", "coins"+amount);
 		}
 	}
@@ -77,30 +84,36 @@ public class EventManager : MonoBehaviour
 	{
 		if (isEnabled)
 		{
-			Debug.Log("EVENT: virtual currency spent");
+			if(debug) Debug.Log("EVENT: virtual currency spent for: " + amount + " of " + item);
 			GameAnalytics.NewResourceEvent (GAResourceFlowType.Sink, "Coins", amount, item, "coins"+amount);
 		}
 	}
 
+	// Progression events
 	public void SendLevelUp(int mission)
 	{
 		if (isEnabled)
 		{
-			Debug.Log("EVENT: level up");
-			level += mission;
-			if(level > 6)
+			missionStatus += mission;
+			if(debug) Debug.Log("EVENT: completed mission " + mission + " of level " + levelStatus + " -> new status: " + missionStatus);
+			GameAnalytics.NewProgressionEvent (GAProgressionStatus.Complete, "level" + levelStatus, "mission" + mission);
+
+			if(missionStatus >= 6)
 			{
-				level -= 6;
-				GameAnalytics.NewProgressionEvent (GAProgressionStatus.Complete, "level"+level, "mission"+mission);
+				GameAnalytics.NewProgressionEvent (GAProgressionStatus.Complete, "level" + levelStatus);
+				levelStatus++;
+				missionStatus = 0;
+				GameAnalytics.NewProgressionEvent (GAProgressionStatus.Start, "level" + levelStatus);
 			}
 		}
 	}
 
+	// Design events
 	public void SendCustomEvent(string name)
 	{
 		if (isEnabled)
 		{
-			Debug.Log("EVENT: " + name);
+			if(debug) Debug.Log("EVENT: " + name);
 		}
 	}
 }
