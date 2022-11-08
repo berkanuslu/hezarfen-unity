@@ -9,6 +9,7 @@ public class EventManager : MonoBehaviour
 
 	static EventManager _instance;
 	static int instances = 0;
+	static int level = 0;
 
 	public bool isEnabled = false;
 
@@ -81,11 +82,17 @@ public class EventManager : MonoBehaviour
 		}
 	}
 
-	public void SendLevelUp()
+	public void SendLevelUp(int mission)
 	{
 		if (isEnabled)
 		{
 			Debug.Log("EVENT: level up");
+			level += mission;
+			if(level > 6)
+			{
+				level -= 6;
+				GameAnalytics.NewProgressionEvent (GAProgressionStatus.Complete, "level"+level, "mission"+mission);
+			}
 		}
 	}
 
