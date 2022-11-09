@@ -85,9 +85,10 @@ public class EventManager : MonoBehaviour
 	// Progression events
 	public void SendMission(int mission)
 	{
+		int status = -1;
 		if (isEnabled)
 		{
-			int status = PreferencesManager.Instance.GetLevelStatus() + mission;
+			status = PreferencesManager.Instance.GetLevelStatus() + mission;
 			PreferencesManager.Instance.SetLevelStatus(status);
 			GameAnalytics.NewProgressionEvent (GAProgressionStatus.Complete, "level" + PreferencesManager.Instance.GetLevel(), "mission" + mission);
 			if(status >= 6) SendLevelUp(status);
@@ -96,11 +97,12 @@ public class EventManager : MonoBehaviour
 	}
 	private void SendLevelUp(int status)
 	{
+		int level = -1;
 		if (isEnabled)
 		{
 			status -= 6;
 			PreferencesManager.Instance.SetLevelStatus(status);
-			int level = PreferencesManager.Instance.GetLevel();
+			level = PreferencesManager.Instance.GetLevel();
 			GameAnalytics.NewProgressionEvent (GAProgressionStatus.Complete, "level" + level);
 			PreferencesManager.Instance.SetLevel(++level);
 			GameAnalytics.NewProgressionEvent (GAProgressionStatus.Start, "level" + level);
