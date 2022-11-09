@@ -350,7 +350,7 @@ public class MissionManager : MonoBehaviour
 	void MissionCompleted(Mission mission, int missionID)
 	{
 		activeMissionComplete[missionID] = true;
-		EventManager.Instance.SendLevelUp(missionID+1);
+		EventManager.Instance.SendMission(missionID+1);
 
 		StartCoroutine(GameMenuManager.Instance.ShowMissionComplete(mission.description));
 	}

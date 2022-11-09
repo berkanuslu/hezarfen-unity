@@ -21,10 +21,12 @@ public class PreferencesManager : MonoBehaviour
 	int mission1 = 0;
 	int mission2 = 1;
 	int mission3 = 2;
-
 	int mission1Data = 0;
 	int mission2Data = 0;
 	int mission3Data = 0;
+
+	int level = 0;
+	int levelStatus = 0;
 
 	string missionData = "";
 
@@ -77,24 +79,27 @@ public class PreferencesManager : MonoBehaviour
 
 	public void CreateData()
 	{
-		PlayerPrefs.SetInt("CoinAmmount", 15000);
-		PlayerPrefs.SetInt("BestDistance", 0);
+		PlayerPrefs.SetInt("CoinAmmount", coinAmmount);
+		PlayerPrefs.SetInt("BestDistance", bestDistance);
 
-		PlayerPrefs.SetInt("ExtraSpeed", 1);
-		PlayerPrefs.SetInt("Shield", 1);
-		PlayerPrefs.SetInt("Abracadabra", 1);
-		PlayerPrefs.SetInt("Revive", 1);
+		PlayerPrefs.SetInt("ExtraSpeed", extraSpeed);
+		PlayerPrefs.SetInt("Shield", shield);
+		PlayerPrefs.SetInt("Abracadabra", abracadabra);
+		PlayerPrefs.SetInt("Revive", revive);
 
-		PlayerPrefs.SetInt("Mission1", 0);
-		PlayerPrefs.SetInt("Mission2", 1);
-		PlayerPrefs.SetInt("Mission3", 2);
+		PlayerPrefs.SetInt("Mission1", mission1);
+		PlayerPrefs.SetInt("Mission2", mission2);
+		PlayerPrefs.SetInt("Mission3", mission3);
 
-		PlayerPrefs.SetInt("Mission1Data", 0);
-		PlayerPrefs.SetInt("Mission2Data", 0);
-		PlayerPrefs.SetInt("Mission3Data", 0);
+		PlayerPrefs.SetInt("Mission1Data", mission1Data);
+		PlayerPrefs.SetInt("Mission2Data", mission2Data);
+		PlayerPrefs.SetInt("Mission3Data", mission3Data);
 
-		PlayerPrefs.SetString("Missions", "");
-		PlayerPrefs.SetFloat("MusicVolume", 1.0f);
+		PlayerPrefs.SetString("Missions", missionData);
+		PlayerPrefs.SetFloat("MusicVolume", musicVolume);
+
+		PlayerPrefs.SetInt("Level", level);
+		PlayerPrefs.SetInt("LevelStatus", levelStatus);
 
 		PlayerPrefs.Save();
 		LoadData();
@@ -102,25 +107,28 @@ public class PreferencesManager : MonoBehaviour
 
 	void LoadData()
 	{
-		coinAmmount = PlayerPrefs.GetInt("CoinAmmount");
-		bestDistance = PlayerPrefs.GetInt("BestDistance");
+		coinAmmount = PlayerPrefs.GetInt("CoinAmmount", coinAmmount);
+		bestDistance = PlayerPrefs.GetInt("BestDistance", bestDistance);
 
-		extraSpeed = PlayerPrefs.GetInt("ExtraSpeed");
-		shield = PlayerPrefs.GetInt("Shield");
-		abracadabra = PlayerPrefs.GetInt("Abracadabra");
-		revive = PlayerPrefs.GetInt("Revive");
+		extraSpeed = PlayerPrefs.GetInt("ExtraSpeed", extraSpeed);
+		shield = PlayerPrefs.GetInt("Shield", shield);
+		abracadabra = PlayerPrefs.GetInt("Abracadabra", abracadabra);
+		revive = PlayerPrefs.GetInt("Revive", revive);
 
-		mission1 = PlayerPrefs.GetInt("Mission1");
-		mission2 = PlayerPrefs.GetInt("Mission2");
-		mission3 = PlayerPrefs.GetInt("Mission3");
+		mission1 = PlayerPrefs.GetInt("Mission1", mission1);
+		mission2 = PlayerPrefs.GetInt("Mission2", mission2);
+		mission3 = PlayerPrefs.GetInt("Mission3", mission3);
 
-		mission1Data = PlayerPrefs.GetInt("Mission1Data");
-		mission2Data = PlayerPrefs.GetInt("Mission2Data");
-		mission3Data = PlayerPrefs.GetInt("Mission3Data");
+		mission1Data = PlayerPrefs.GetInt("Mission1Data", mission1Data);
+		mission2Data = PlayerPrefs.GetInt("Mission2Data", mission2Data);
+		mission3Data = PlayerPrefs.GetInt("Mission3Data", mission3Data);
 
-		missionData = PlayerPrefs.GetString("Missions");
+		missionData = PlayerPrefs.GetString("Missions", missionData);
 
-		musicVolume = PlayerPrefs.GetFloat("MusicVolume");
+		musicVolume = PlayerPrefs.GetFloat("MusicVolume", musicVolume);
+
+		level = PlayerPrefs.GetInt("Level", level);
+		levelStatus = PlayerPrefs.GetInt("LevelStatus", levelStatus);
 	}
 
 	public int GetCoins()
@@ -202,17 +210,27 @@ public class PreferencesManager : MonoBehaviour
 		return false;
 	}
 
+	public int GetLevel()
+	{
+		return level;
+	}
+
+	public int GetLevelStatus()
+	{
+		return levelStatus;
+	}
+
 	public void SetCoins(int ammount)
 	{
 		coinAmmount = ammount;
-		PlayerPrefs.SetInt("CoinAmmount", coinAmmount);
+		PlayerPrefs.SetInt("CoinAmmount", ammount);
 		PlayerPrefs.Save();
 	}
 
 	public void SetBestDistance(int distance)
 	{
 		bestDistance = distance;
-		PlayerPrefs.SetInt("BestDistance", bestDistance);
+		PlayerPrefs.SetInt("BestDistance", distance);
 		PlayerPrefs.Save();
 	}
 
@@ -289,14 +307,14 @@ public class PreferencesManager : MonoBehaviour
 	public void SetMissionData(string s)
 	{
 		missionData = s;
-		PlayerPrefs.SetString("Missions", missionData);
+		PlayerPrefs.SetString("Missions", s);
 		PlayerPrefs.Save();
 	}
 
 	public void SetMusicVolume(float value)
 	{
 		musicVolume = value;
-		PlayerPrefs.SetFloat("MusicVolume", 1.0f);
+		PlayerPrefs.SetFloat("MusicVolume", value);
 		PlayerPrefs.Save();
 	}
 
@@ -308,5 +326,19 @@ public class PreferencesManager : MonoBehaviour
 			PlayerPrefs.SetInt("first_open", 1);
 			PlayerPrefs.Save();
 		}
+	}
+
+	public void SetLevel(int newLevel)
+	{
+		level = newLevel;
+		PlayerPrefs.SetInt("Level", newLevel);
+		PlayerPrefs.Save();
+	}
+
+	public void SetLevelStatus(int newStatus)
+	{
+		levelStatus = newStatus;
+		PlayerPrefs.SetInt("LevelStatus", newStatus);
+		PlayerPrefs.Save();
 	}
 }

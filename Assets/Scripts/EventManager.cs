@@ -9,9 +9,6 @@ public class EventManager : MonoBehaviour
 
 	static EventManager _instance;
 	static int instances = 0;
-	static int levelStatus = 0;
-	static int missionStatus = 0;
-
 	public bool isEnabled = false;
 	public bool debug = true;
 
@@ -52,10 +49,6 @@ public class EventManager : MonoBehaviour
         }
 #endif
 		GameAnalytics.Initialize();
-		GameAnalytics.NewProgressionEvent (GAProgressionStatus.Start, "level"+levelStatus);
-		GameAnalytics.NewProgressionEvent (GAProgressionStatus.Complete, "level"+levelStatus, "mission"+1);
-		GameAnalytics.NewProgressionEvent (GAProgressionStatus.Complete, "level"+levelStatus, "mission"+2);
-		GameAnalytics.NewProgressionEvent (GAProgressionStatus.Complete, "level"+levelStatus, "mission"+3);
 	}
 
 	public void SendFirstOpenEvent()
@@ -64,10 +57,10 @@ public class EventManager : MonoBehaviour
 		{
 			if (!PreferencesManager.Instance.GetFirtsOpen())
 			{
-				if(debug) Debug.Log("EVENT: first open");
 				PreferencesManager.Instance.SetFirtsOpen();
 			}
 		}
+		if(debug) Debug.Log("EVENT: first open");
 	}
 
 	// Resource events
@@ -75,37 +68,44 @@ public class EventManager : MonoBehaviour
 	{
 		if (isEnabled)
 		{
-			if(debug) Debug.Log("EVENT: virtual currency earned: " + amount);
 			GameAnalytics.NewResourceEvent (GAResourceFlowType.Source, "Coins", amount, "coin", "coins"+amount);
 		}
+		if(debug) Debug.Log("EVENT: virtual currency earned: " + amount);
 	}
 
 	public void SendSpendVirtualCurrency(float amount, string item)
 	{
 		if (isEnabled)
 		{
-			if(debug) Debug.Log("EVENT: virtual currency spent for: " + amount + " of " + item);
 			GameAnalytics.NewResourceEvent (GAResourceFlowType.Sink, "Coins", amount, item, "coins"+amount);
 		}
+		if(debug) Debug.Log("EVENT: virtual currency spent for: " + amount + " of " + item);
 	}
 
 	// Progression events
-	public void SendLevelUp(int mission)
+	public void SendMission(int mission)
 	{
 		if (isEnabled)
 		{
-			missionStatus += mission;
-			if(debug) Debug.Log("EVENT: completed mission " + mission + " of level " + levelStatus + " -> new status: " + missionStatus);
-			GameAnalytics.NewProgressionEvent (GAProgressionStatus.Complete, "level" + levelStatus, "mission" + mission);
-
-			if(missionStatus >= 6)
-			{
-				GameAnalytics.NewProgressionEvent (GAProgressionStatus.Complete, "level" + levelStatus);
-				levelStatus++;
-				missionStatus = 0;
-				GameAnalytics.NewProgressionEvent (GAProgressionStatus.Start, "level" + levelStatus);
-			}
+			int status = PreferencesManager.Instance.GetLevelStatus() + mission;
+			PreferencesManager.Instance.SetLevelStatus(status);
+			GameAnalytics.NewProgressionEvent (GAProgressionStatus.Complete, "level" + PreferencesManager.Instance.GetLevel(), "mission" + mission);
+			if(status >= 6) SendLevelUp(status);
 		}
+		if(debug) Debug.Log("EVENT: completed mission " + mission + " -> status: " + status);
+	}
+	private void SendLevelUp(int status)
+	{
+		if (isEnabled)
+		{
+			status -= 6;
+			PreferencesManager.Instance.SetLevelStatus(status);
+			int level = PreferencesManager.Instance.GetLevel();
+			GameAnalytics.NewProgressionEvent (GAProgressionStatus.Complete, "level" + level);
+			PreferencesManager.Instance.SetLevel(++level);
+			GameAnalytics.NewProgressionEvent (GAProgressionStatus.Start, "level" + level);
+		}
+		if(debug) Debug.Log("EVENT: completed level " + (level-1) + " -> new status: " + status);
 	}
 
 	// Design events
@@ -113,7 +113,7 @@ public class EventManager : MonoBehaviour
 	{
 		if (isEnabled)
 		{
-			if(debug) Debug.Log("EVENT: " + name);
 		}
+		if(debug) Debug.Log("EVENT: " + name);
 	}
 }
